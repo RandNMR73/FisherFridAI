@@ -2,7 +2,8 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+
 
 @app.route('/api/data', methods=['GET', 'POST'])
 def data():
@@ -16,6 +17,11 @@ def data():
 
     else:
         return jsonify({'message': 'Send some data'})
+
+
+@app.route('/message', methods=['GET'])
+def message():
+    return jsonify({'message': 'Hello from the backend!'})
 
 
 if __name__ == '__main__':
