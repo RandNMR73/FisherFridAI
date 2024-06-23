@@ -4,9 +4,13 @@ from flask_cors import CORS
 
 from backend import claude_helper
 from backend.specificity import get_specificity_score
+from backend.tree_of_knowledge import KnowledgeTree, add_info
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://verylocal:3000"}})
+
+# Global knowledge tree
+knowledge_tree = None
 
 
 @app.route('/api/data', methods=['GET', 'POST'])
@@ -68,6 +72,79 @@ def specify():
                     specific_goals[i] = goal[16:]
 
         return jsonify({'result': specific_goals})
+
+
+@app.route('/set_up_tree', methods=['POST'])
+def set_up_tree():
+    global knowledge_tree
+    data = request.get_json()
+    topic = data.get('topic')
+
+    if not topic:
+        return jsonify({'error': 'No topic provided'}), 400
+
+    knowledge_tree = KnowledgeTree(topic)
+    add_info(knowledge_tree, topic, -2)
+
+    return jsonify({'message': 'Knowledge tree initialized'}), 200
+
+
+@app.route('/get_next_uncomfortable', methods=['GET'])
+def get_next_uncomfortable():
+    global knowledge_tree
+    if not knowledge_tree:
+        return jsonify({'error': 'Knowledge tree not initialized'}), 400
+
+    leaves = knowledge_tree.get_leaves(knowledge_tree.root)
+    done = True
+    for leaf in leaves:
+        if leaf.comfort_level < 0:
+            done = False
+            break
+    if done:
+        return jsonify({'message': 'All topics are comfortable'}), 200
+
+    next_uncomfortable = knowledge_tree.get_first_uncomfortable_node(knowledge_tree.root)
+    print("PY", next_uncomfortable.topic)
+
+    if not next_uncomfortable:
+        return jsonify({'message': 'All topics are comfortable'}), 200
+
+    return jsonify({'next_uncomfortable': next_uncomfortable.topic}), 200
+
+
+@app.route('/add_info', methods=['POST'])
+def add_comfort_info():
+    global knowledge_tree
+    data = request.get_json()
+    topic = data.get('topic')
+    comfort_level = data.get('comfort_level')
+
+    if not topic or comfort_level is None:
+        return jsonify({'error': 'Topic and comfort level are required'}), 400
+
+    try:
+        add_info(knowledge_tree, topic, comfort_level)
+        return jsonify({'message': 'Comfort level updated successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/print_tree', methods=['GET'])
+def print_tree():
+    global knowledge_tree
+    if not knowledge_tree:
+        return jsonify({'error': 'Knowledge tree not initialized'}), 400
+
+    def generate_tree_string(node, level=0):
+        tree_string = f'Level {level}: {"  " * level}{node.topic} ({node.comfort_level})\n'
+        for prereq in node.prerequisites:
+            tree_string += generate_tree_string(prereq, level + 1)
+        return tree_string
+
+    tree_string = generate_tree_string(knowledge_tree.root)
+
+    return jsonify({'tree': tree_string}), 200
 
 
 if __name__ == '__main__':

@@ -1,0 +1,45 @@
+.comfort-selector {
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 1000px; /* Adjust this value as needed */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.bubble-container {
+  display: flex;
+  justify-content: space-between; /* Changed from space-around */
+  margin-top: 10px;
+}
+
+.bubble {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 2px solid #61dafb;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.3s ease;
+  flex: 0 0 auto; /* Prevent bubbles from growing or shrinking */
+  margin: 0 5px; /* Add a small margin for spacing */
+}
+
+.bubble:hover {
+  background-color: #e6f7ff;
+}
+
+.bubble.selected {
+  background-color: #61dafb;
+  color: white;
+}
+
+/* New styles for bubble text */
+.bubble-text {
+  text-align: center;
+  word-wrap: break-word;
+  max-width: 90%; /* Ensure text doesn't overflow bubble */
+}
