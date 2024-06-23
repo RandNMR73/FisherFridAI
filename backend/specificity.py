@@ -31,7 +31,7 @@ def get_specificity_score(learning_goal):
     # content = message.content[0].text
     content = claude_helper.call_claude(system_prompt="A student will "
                "provide you with a learning goal and you will evaluate it for its specificity, considering how broad the "
-               "topic is to understand. Reply wtih a single integer between 0 and 100 indicating the specificty. If it is "
+               "topic is to understand. ALWAYS Reply wtih a SINGLE integer between 0 and 100 indicating the specificty. If it is "
                "very broad, give it a low score, if it is very specific give it a high score.",
                user_prompt=f"{learning_goal}",
                max_tokens=100,

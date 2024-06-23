@@ -38,17 +38,17 @@ def specify():
 
     specificity_score = get_specificity_score(prompt)
 
-    if specificity_score >= 80:  # You can adjust this threshold as needed
+    if specificity_score >= 70:  # You can adjust this threshold as needed
         return jsonify({'result': ['done']})
     else:
         content = claude_helper.call_claude(
-            system_prompt="You are helping to generate more specific learning goals. Given a broad learning goal, divide the goal into 3-5 sections. Provide ONLY a list of these 2-5 sections. They should ALL start with 'I want to learn '. They should be seperated by '|' symbols and enclosed by square brackets ([]), do not ever stray away from this format or provide fluff at the start or end.",
+            system_prompt="You are helping to generate more specific learning goals. Given a broad learning goal, divide the goal into 3-5 sections. Provide ONLY a list of these 2-5 sections. They should ALL start with 'I want to learn '. They should ALWAYS be seperated by '|' symbols and are ALWAYS enclosed by square brackets ([]), do not ever stray away from this format or provide fluff at the start or end.",
             user_prompt=f"{prompt}",
             max_tokens=400)
 
         # assert that the response is enclosed in square brackets
         if not content.startswith('[') or not content.endswith(']'):
-            return jsonify({'error': 'Response is not enclosed in square brackets.'}), 402
+            return jsonify({'error': 'Response is not enclosed in square brackets. ' + content}), 402
 
         # remove the square brackets
         content = content[1:-1]
