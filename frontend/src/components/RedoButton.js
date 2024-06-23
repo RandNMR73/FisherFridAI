@@ -18,7 +18,7 @@ const StyledButton = styled.button`
 
   &:hover {
     background-color: rgba(255, 255, 255, 0.3);
-  } 
+  }
 `;
 
 const RedoButton = ({ onClick }) => {

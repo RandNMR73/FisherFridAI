@@ -15,6 +15,7 @@ const HeaderTitle = styled.h1`
   font-size: 28px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 `;
+
 const Header = () => (
   <HeaderContainer style = {{ marginLeft: '0px' }}>
     <HeaderTitle style = {{marginLeft: '65px'}}>Fisher-Friday

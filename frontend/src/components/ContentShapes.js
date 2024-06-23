@@ -7,12 +7,12 @@ const ShapesContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(${props => props.count}, 1fr);
   gap: 12px;
-  padding: 12px;
+  padding: 50px;
   overflow-y: auto;
 `;
 
 const Shape = styled(animated.div)`
-  padding: 12px;
+  padding: 10px;
   text-align: center;
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
@@ -22,8 +22,8 @@ const Shape = styled(animated.div)`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: 120px;
-  max-height: 160px;
+  min-height: 150px;
+  max-height: 300px;
 
   &:hover {
     &:hover {
@@ -44,34 +44,35 @@ const Shape = styled(animated.div)`
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;   
-  } 
+    -webkit-box-orient: vertical;
+  }
 `;
 
 const shapeData = [
-    { title: 'Goal', content: 'Your main objective or goal.' },
-    { title: 'Strategy', content: 'The strategy to achieve your goal.' },
-    { title: 'Action', content: 'Specific actions to implement your strategy.' },
-    { title: 'Progress', content: 'Track your progress towards the goal.' },
-    { title: 'Challenges', content: 'Potential obstacles and how to overcome them.' }, 
+  { title: 'Goal', content: 'Your main objective or goal.' },
+  { title: 'Strategy', content: 'The strategy to achieve your goal.' },
+  { title: 'Action', content: 'Specific actions to implement your strategy.' },
+  { title: 'Progress', content: 'Track your progress towards the goal.' },
+  { title: 'Challenges', content: 'Potential obstacles and how to overcome them.' },
 ];
 
 const ContentShapes = ({ count }) => {
-    const trail = useTrail(count, {
-      from: { opacity: 0, transform: 'translate3d(0,40px,0)' },
-      to: { opacity: 1, transform: 'translate3d(0,0px,0)' },
-      config: { mass: 1, tension: 280, friction: 20 },
+  const trail = useTrail(count, {
+    from: { opacity: 0, transform: 'translate3d(0,40px,0)' },
+    to: { opacity: 1, transform: 'translate3d(0,0px,0)' },
+    config: { mass: 1, tension: 280, friction: 20 },
   });
-    return (
-      <ShapesContainer count={count}>
-        {trail.map((props, index) => (
-          <Shape key={index} style={props}>
-            <h3>{shapeData[index].title}</h3>
-            <p>{shapeData[index].content}</p>
-          </Shape>
-        ))}
-      </ShapesContainer>
-  ); 
+
+  return (
+    <ShapesContainer count={count}>
+      {trail.map((props, index) => (
+        <Shape key={index} style={props}>
+          <h3>{shapeData[index].title}</h3>
+          <p>{shapeData[index].content}</p>
+        </Shape>
+      ))}
+    </ShapesContainer>
+  );
 };
 
-  export default ContentShapes;
+export default ContentShapes;

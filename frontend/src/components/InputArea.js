@@ -19,9 +19,10 @@ const StyledInput = styled.input`
   color: white;
   margin-right: 15px;
   font-size: 16px;
+
   &::placeholder {
     color: rgba(255, 255, 255, 0.7);
-  } 
+  }
 `;
 
 const StyledButton = styled.button`
@@ -34,7 +35,7 @@ const StyledButton = styled.button`
   transition: all 0.3s ease-in-out;
   font-size: 16px;
   font-weight: 500;
-  
+
   &:hover {
     background: rgba(255, 255, 255, 0.4);
     transform: translateY(-2px);
@@ -62,7 +63,7 @@ const InputArea = ({ onSendMessage }) => {
       />
       <StyledButton type="submit">Send</StyledButton>
     </InputContainer>
-  ); 
+  );
 };
 
 export default InputArea;
