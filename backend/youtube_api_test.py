@@ -65,7 +65,7 @@ def fetch_videos_info(search_query):
                                 int(video_info["View Count"]) + 1)
 
                 # add comment to view ratio
-                video_info["Comment to View Ratio"] = float(video_info["Comment Count"]) / (
+                video_info["Comment to View Ratio"] = float(0 if video_info["Comment Count"] == 'N/A' else video_info["Comment Count"]) / (
                             int(video_info["View Count"]) + 1)
 
                 # add recency score
@@ -79,7 +79,7 @@ def fetch_videos_info(search_query):
 
 
 if __name__ == "__main__":
-    SEARCH_QUERY = 'Python programming'
+    SEARCH_QUERY = 'History of the civil rights movement in the United States'
     videos_info = fetch_videos_info(SEARCH_QUERY)
     print(videos_info)
 
