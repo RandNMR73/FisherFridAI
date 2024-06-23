@@ -1,23 +1,24 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import ChatHistory from './components/ChatHistory';
+import ChatWindow from './components/ChatWindow';
+import InputArea from './components/InputArea';
+import './styles.css';
 
 function App() {
+  const [messages, setMessages] = useState([]);
+  const [chatHistory, setChatHistory] = useState([]);
+
+  const addMessage = (text, isUser = true) => {
+    setMessages([...messages, { text, isUser }]);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Hello World :D
-        </a>
-      </header>
+    <div className="app-container">
+      <ChatHistory history={chatHistory} />
+      <div className="main-chat-area">
+        <ChatWindow messages={messages} />
+        <InputArea onSendMessage={addMessage} />
+      </div>
     </div>
   );
 }
