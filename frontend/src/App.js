@@ -8,7 +8,7 @@ function App() {
 
   useEffect(() => {
     // Fetch the message from the backend
-    axios.get('http://localhost:5000/message')
+    axios.get('http://verylocal:5000/message')
       .then(response => {
         setMessage(response.data.message);
       })
