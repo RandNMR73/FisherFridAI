@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ChatHistory from './components/ChatHistory';
-import ChatWindow from './components/ChatWindow';
+import ChatWindow from '.components/ChatWindow';
 import InputArea from './components/InputArea';
 import './styles.css';
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import MessageItem from './MessageItem';
+import MessageItem from './components/MessageItem';
 
 const ChatWindow = ({ messages }) => (
   <div className="chat-window">
