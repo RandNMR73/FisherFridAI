@@ -1,37 +1,39 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios'; // if using axios
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import axios from 'axios';
 import './App.css';
 
 function App() {
-  const [message, setMessage] = useState('');
+  const [prompt, setPrompt] = useState('');
+  const [result, setResult] = useState('');
 
-  useEffect(() => {
-    // Fetch the message from the backend
-    axios.get('http://verylocal:5000/message')
-      .then(response => {
-        setMessage(response.data.message);
-      })
-      .catch(error => {
-        console.error('There was an error fetching the message!', error);
-      });
-  }, []);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('http://verylocal:5000/specify', { prompt });
+      setResult(JSON.stringify(response.data.result, null, 2));
+    } catch (error) {
+      console.error('There was an error fetching the results!', error);
+      setResult('Error: ' + error.message);
+    }
+  };
 
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          {message}
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Hello World :D
-        </a>
+        <h1>Specificity Checker</h1>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            placeholder="Enter your prompt"
+          />
+          <button type="submit">Check Specificity</button>
+        </form>
+        <div>
+          <h2>Result:</h2>
+          <pre>{result}</pre>
+        </div>
       </header>
     </div>
   );

@@ -9,8 +9,6 @@ from backend.dislikes import get_dislike_count
 API_KEY = 'AIzaSyBuEW6_VrihFewcGlGk44rwaa0CRaw8qMs'
 
 
-
-
 def search_videos(query):
     search_url = 'https://www.googleapis.com/youtube/v3/search'
     search_params = {
@@ -55,26 +53,25 @@ def fetch_videos_info(search_query):
                     "Duration": isodate.parse_duration(video['contentDetails']['duration']).total_seconds(),
                     "Dislike Count": get_dislike_count(video_id)
                 }
-                videos_info.append(video_info)
-                # add a section for scores
-                video_info["Scores"] = {}
 
                 # if like count is not available, set it to 0
                 if video_info["Like Count"] != "N/A":
                     # add like to dislike ratio
-                    video_info["Scores"]["Like to Dislike Ratio"] = float(video_info["Like Count"]) / (int(
-                        video_info["Dislike Count"]) + 1)
+                    video_info["Like to Dislike Ratio"] = float(video_info["Like Count"]) / (
+                                int(video_info["Dislike Count"]) + 1)
 
                     # add like to view ratio
-                    video_info["Scores"]["Like to View Ratio"] = float(video_info["Like Count"]) / (int(
-                        video_info["View Count"]) + 1)
+                    video_info["Like to View Ratio"] = float(video_info["Like Count"]) / (
+                                int(video_info["View Count"]) + 1)
 
                 # add comment to view ratio
-                video_info["Scores"]["Comment to View Ratio"] = float(video_info["Comment Count"]) / (int(
-                    video_info["View Count"]) + 1)
+                video_info["Comment to View Ratio"] = float(video_info["Comment Count"]) / (
+                            int(video_info["View Count"]) + 1)
 
                 # add recency score
-                video_info["Scores"]["Recency Score"] = (datetime.datetime.now() - video_info["Published at"]).days
+                video_info["Recency Score"] = (datetime.datetime.now() - video_info["Published at"]).days
+
+                videos_info.append(video_info)
 
         return videos_info
     else:
@@ -87,19 +84,18 @@ if __name__ == "__main__":
     print(videos_info)
 
     # get an array of just like to dislike ratios (if available)
-    like_to_dislike_ratios = [video["Scores"]["Like to Dislike Ratio"] for video in videos_info if
-                              "Like to Dislike Ratio" in video["Scores"]]
+    like_to_dislike_ratios = [video["Like to Dislike Ratio"] for video in videos_info if
+                              "Like to Dislike Ratio" in video]
 
     # get an array of just like to view ratios (if available)
-    like_to_view_ratios = [video["Scores"]["Like to View Ratio"] for video in videos_info if
-                           "Like to View Ratio" in video["Scores"]]
+    like_to_view_ratios = [video["Like to View Ratio"] for video in videos_info if "Like to View Ratio" in video]
 
     # get an array of just comment to view ratios (if available)
-    comment_to_view_ratios = [video["Scores"]["Comment to View Ratio"] for video in videos_info if
-                              "Comment to View Ratio" in video["Scores"]]
+    comment_to_view_ratios = [video["Comment to View Ratio"] for video in videos_info if
+                              "Comment to View Ratio" in video]
 
     # get an array of just recency scores (if available)
-    recency_scores = [video["Scores"]["Recency Score"] for video in videos_info if "Recency Score" in video["Scores"]]
+    recency_scores = [video["Recency Score"] for video in videos_info if "Recency Score" in video]
 
     print(f"Like to Dislike Ratios: {like_to_dislike_ratios}")
     print(f"Like to View Ratios: {like_to_view_ratios}")
@@ -145,6 +141,3 @@ if __name__ == "__main__":
     # Adjust the layout and display the plot
     plt.tight_layout()
     plt.show()
-
-
-
