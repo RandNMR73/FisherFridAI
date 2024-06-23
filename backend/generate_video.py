@@ -44,9 +44,6 @@ def convertToGaussian(arr, mu_desired):
     mu = np.mean(arr)
     sigma = np.sqrt(np.var(arr))
 
-    # print(mu)
-    # min, max = np.min(arr), np.max(arr)
-    # print(f'min: {min}', f'max: {max}')
     # get probability masses
     probs = 1/(sigma * np.sqrt(2*math.pi)) * np.exp(-(arr - mu_desired) ** 2 / (2 * sigma ** 2))
     return probs
@@ -57,12 +54,10 @@ def videoScoreGenerator(data):
     # handle generic cases
     indices = np.arange(13)
     desiredIndices = np.array([index for index in indices if index != 3])
-    # print(desiredIndices.shape)
     listDataModified = listData[:, desiredIndices]
-    # print(listDataModified.shape)
     listDataModified /= listDataModified.sum(axis=1, keepdims=True)  
 
-    # index 3 (video duration)
+    # handle video duration
     videoDurationLog = np.log(listData[:, 3])
     videoDurationNormalized = convertToGaussian(videoDurationLog, 8.18868912)
     np.insert(listDataModified, 3, videoDurationNormalized)
@@ -70,16 +65,6 @@ def videoScoreGenerator(data):
     videoScores = np.zeros(len(listDataModified))
     for i, arr in enumerate(listDataModified):
         videoScores[i] = (arr[0] / 0.5 - 1) * 2 + 0.25 * arr[3] + (arr[5] / 0.85 - 1) * 4 + 0.7 * arr[6] * np.sqrt(int(arr[0])) + 0.1 * arr[7] + 0.25 * arr[8]
-        # for j in range(len(arr)):
-        #     if j < 3 or j == 4: continue
-        #     else:
-        #         addScore = 0
-        #         if j == 3: addScore = 0.5 * arr[j]
-        #         elif j == 5: addScore = (arr[j] / 0.85 - 1) * 4
-        #         elif j == 6: 0.7 * arr[j] * np.sqrt(arr[0])
-        #         elif j == 7: 0.1 * arr[j]
-        #         elif j == 8: 0.25 * arr[j]
-        #         videoScores[i] += addScore
     return videoScores
 
 def pickVideo(data):
@@ -87,15 +72,10 @@ def pickVideo(data):
     videoScores = preprocessing.normalize([videoScores])[0]
     top1, top2, top3, top4, top5 = np.argsort(videoScores)[-5:]
     topVideos = np.array([top1, top2, top3, top4, top5])
-    # print(data[top1])
-    # print(data[top2])
-    # print(data[top3])
-    # print(data[top4])
-    # print(data[top5])
     topVideoStatistic = np.array([int(data[top1]['View Count']), int(data[top2]['View Count']), int(data[top3]['View Count']), int(data[top4]['View Count']), int(data[top5]['View Count'])])
     choice = np.argmax(topVideoStatistic)
     return data[topVideos[choice]]
 
-print(pickVideo(dataCS))
-print(pickVideo(dataHistory))
-print(pickVideo(dataPhysics))
+print(pickVideo(dataCS)['Title'], pickVideo(dataCS)['Channel'])
+print(pickVideo(dataHistory)['Title'], pickVideo(dataHistory)['Channel'])
+print(pickVideo(dataPhysics)['Title'], pickVideo(dataPhysics)['Channel'])
