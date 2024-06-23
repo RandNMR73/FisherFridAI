@@ -38,11 +38,11 @@ def specify():
 
     specificity_score = get_specificity_score(prompt)
 
-    if specificity_score >= 70:  # You can adjust this threshold as needed
+    if specificity_score >= 40:  # You can adjust this threshold as needed
         return jsonify({'result': ['done']})
     else:
         content = claude_helper.call_claude(
-            system_prompt="You are helping to generate more specific learning goals. Given a broad learning goal, divide the goal into 3-5 sections. Provide ONLY a list of these 2-5 sections. They should ALL start with 'I want to learn '. They should ALWAYS be seperated by '|' symbols and are ALWAYS enclosed by square brackets ([]), do not ever stray away from this format or provide fluff at the start or end.",
+            system_prompt="You are helping to generate more specific learning goals. Given a broad learning goal, divide the goal into 2-5 more specific sections. Provide ONLY a list of these 2-5 sections. They should ALL start with 'I want to learn '. They should ALWAYS be seperated by '|' symbols and are ALWAYS enclosed by square brackets ([]), do not ever stray away from this format or provide fluff at the start or end.",
             user_prompt=f"{prompt}",
             max_tokens=400)
 
@@ -59,10 +59,13 @@ def specify():
         # for each specific goal, check if it is a continuation of "I want to learn about "
         for i, goal in enumerate(specific_goals):
             if not goal.startswith('I want to learn '):
-                return jsonify({'error': f'Goal {i + 1} does not start with "I want to learn about"'}), 403
+                return jsonify({'error': f'Goal {i + 1} does not start with "I want to learn "'}), 403
                 # 1 + 1
             else:
-                specific_goals[i] = goal[16:]
+                if goal.startswith('I want to learn about '):
+                    specific_goals[i] = goal[22:]
+                else:
+                    specific_goals[i] = goal[16:]
 
         return jsonify({'result': specific_goals})
 

@@ -56,9 +56,10 @@ def fetch_videos_info(search_query):
 
                 # if like count is not available, set it to 0
                 if video_info["Like Count"] != "N/A":
-                    # add like to dislike ratio
-                    video_info["Like to Dislike Ratio"] = float(video_info["Like Count"]) / (
-                                int(video_info["Dislike Count"]) + 1)
+                    if video_info["Dislike Count"] != "N/A":
+                        # add like to dislike ratio
+                        video_info["Like to Dislike Ratio"] = float(video_info["Like Count"]) / (
+                                    int(video_info["Dislike Count"]) + 1)
 
                     # add like to view ratio
                     video_info["Like to View Ratio"] = float(video_info["Like Count"]) / (
@@ -79,7 +80,7 @@ def fetch_videos_info(search_query):
 
 
 if __name__ == "__main__":
-    SEARCH_QUERY = 'History of the civil rights movement in the United States'
+    SEARCH_QUERY = 'gravity and orbital mechanics'
     videos_info = fetch_videos_info(SEARCH_QUERY)
     print(videos_info)
 
