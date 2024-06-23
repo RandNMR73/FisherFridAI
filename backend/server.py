@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 from backend import claude_helper
+from backend.generate_video_path import generateVideos
 from backend.specificity import get_specificity_score
 from backend.tree_of_knowledge import KnowledgeTree, add_info
 
@@ -130,21 +131,31 @@ def add_comfort_info():
         return jsonify({'error': str(e)}), 500
 
 
+def generate_tree_string(node, level=0):
+    tree_string = f'Level {level}: {"  " * level}{node.topic} ({node.comfort_level})\n'
+    for prereq in node.prerequisites:
+        tree_string += generate_tree_string(prereq, level + 1)
+    return tree_string
+
+
 @app.route('/print_tree', methods=['GET'])
 def print_tree():
     global knowledge_tree
     if not knowledge_tree:
         return jsonify({'error': 'Knowledge tree not initialized'}), 400
 
-    def generate_tree_string(node, level=0):
-        tree_string = f'Level {level}: {"  " * level}{node.topic} ({node.comfort_level})\n'
-        for prereq in node.prerequisites:
-            tree_string += generate_tree_string(prereq, level + 1)
-        return tree_string
-
     tree_string = generate_tree_string(knowledge_tree.root)
 
     return jsonify({'tree': tree_string}), 200
+
+
+@app.route('/generate_path', methods=['GET'])
+def generate_path():
+    global knowledge_tree
+    if not knowledge_tree:
+        return jsonify({'error': 'Knowledge tree not initialized'}), 400
+    printed_tree = generate_tree_string(knowledge_tree.root)
+    return jsonify({'path': generateVideos(printed_tree)}), 200
 
 
 if __name__ == '__main__':

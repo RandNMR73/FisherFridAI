@@ -9,7 +9,7 @@ import RedoButton from './components/RedoButton';
 import axios from 'axios';
 import {useCallback} from 'react';
 import ComfortSelector from "./ComfortSelector";
-
+import BlockView from "./components/BlockView";
 
 
 const AppContainer = styled.div`
@@ -149,7 +149,7 @@ function App() {
         try {
             const formattedTopic = topic.startsWith("I want to learn ") ? topic : `I want to learn ${topic}`;
             console.log("Formatted topic:", formattedTopic);
-            await axios.post('http://verylocal:5000/set_up_tree', { topic: formattedTopic });
+            await axios.post('http://verylocal:5000/set_up_tree', {topic: formattedTopic});
             console.log("Tree set up!");
             await getNextUncomfortable();
         } catch (error) {
@@ -175,24 +175,49 @@ function App() {
 
     const comfortLevelToNumber = (comfort_level) => {
         switch (comfort_level) {
-            case 'Very Uncomfortable': return -2;
-            case 'Uncomfortable': return -1;
-            case 'Comfortable': return 1;
-            case 'Very Comfortable': return 2;
-            default: return -10;
+            case 'Very Uncomfortable':
+                return -2;
+            case 'Uncomfortable':
+                return -1;
+            case 'Comfortable':
+                return 1;
+            case 'Very Comfortable':
+                return 2;
+            default:
+                return -10;
         }
     }
 
     const handleComfortSelect = async (topic, comfort_level) => {
         console.log(`Selected comfort level for ${topic}: ${comfort_level}`);
         try {
-            await axios.post('http://verylocal:5000/add_info', { topic, comfort_level: comfortLevelToNumber(comfort_level) });
+            await axios.post('http://verylocal:5000/add_info', {
+                topic,
+                comfort_level: comfortLevelToNumber(comfort_level)
+            });
             setSelectedComfortLevel("");
             await getNextUncomfortable();
         } catch (error) {
             console.error('There was an error updating the comfort level!', error);
         }
     };
+
+    const [videoList, setVideoList] = useState([]);
+
+    const fetchVideoList = useCallback(async () => {
+        try {
+            const response = await axios.get('http://verylocal:5000/generate_path');
+            setVideoList(response.data.path);
+        } catch (error) {
+            console.error('Error fetching video list:', error);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (isSecondProgram) {
+            fetchVideoList();
+        }
+    }, [isSecondProgram, fetchVideoList]);
 
     return (
         <div>
@@ -233,7 +258,17 @@ function App() {
                                         />
                                     </div>
                                 )}
-                                {!currentTopic && <p>All topics are comfortable!</p>}
+                                {!currentTopic}
+                                {videoList.length > 0 && (
+                                    <div>
+                                        <h3>Recommended Videos:</h3>
+                                        <ul>
+                                            {videoList.map((video, index) => (
+                                                <li key={index}>{video}</li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
                             </header>
                         </div>
                     )}
