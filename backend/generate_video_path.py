@@ -11,6 +11,8 @@ from dislikes import get_dislike_count
 import math
 from sklearn import preprocessing
 
+#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
+
 # Your API key
 API_KEY = 'AIzaSyANYI0lq5lrtBVd9mdVYHt6dxWvFF__9WM'
 
@@ -126,7 +128,7 @@ def generateVideos(jsonTree):
 
                     # if like count is not available, set it to 0
                     if video_info["Like Count"] != "N/A":
-                        if video_info["Dislike Count"] != "N/A":
+                        if video_info["Dislike Count"] != "N/A" and isinstance(video_info["Dislike Count"], int):
                             # add like to dislike ratio
                             video_info["Like to Dislike Ratio"] = float(video_info["Like Count"]) / (
                                         int(video_info["Dislike Count"]) + 1)
